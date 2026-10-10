@@ -481,5 +481,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# Assignment brief (contains API token)
-obiletcom_Programming_Assignment__SD_1_1.pdf
+# Local assignment materials
+docs/
