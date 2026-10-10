@@ -1,4 +1,7 @@
+using System.Net.Http.Headers;
+using Microsoft.Extensions.Options;
 using ObiletCase.Web.Configuration;
+using ObiletCase.Web.Services.Obilet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,13 @@ builder.Services.AddOptions<ObiletApiOptions>()
     .Bind(builder.Configuration.GetSection(ObiletApiOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
+builder.Services.AddHttpClient<IObiletApiClient, ObiletApiClient>((serviceProvider, client) =>
+{
+    var options = serviceProvider.GetRequiredService<IOptions<ObiletApiOptions>>().Value;
+    client.BaseAddress = new Uri(options.BaseUrl);
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", options.ClientToken);
+});
 
 var app = builder.Build();
 
