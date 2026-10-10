@@ -1,7 +1,14 @@
+using ObiletCase.Web.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddOptions<ObiletApiOptions>()
+    .Bind(builder.Configuration.GetSection(ObiletApiOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var app = builder.Build();
 
