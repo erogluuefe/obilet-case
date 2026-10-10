@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ObiletCase.Web.Options;
+namespace ObiletCase.Web.Configuration;
 
 /// <summary>obilet.com API settings ("ObiletApi" section).</summary>
 public class ObiletApiOptions

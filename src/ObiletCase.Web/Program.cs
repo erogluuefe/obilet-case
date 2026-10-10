@@ -1,4 +1,4 @@
-using ObiletCase.Web.Options;
+using ObiletCase.Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
