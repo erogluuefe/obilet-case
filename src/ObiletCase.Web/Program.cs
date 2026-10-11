@@ -46,6 +46,14 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// Every request runs in Turkish culture, so dates and prices are written the Turkish way in every view.
+var supportedCultures = new[] { "tr-TR" };
+
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture("tr-TR")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures));
+
 app.UseRouting();
 
 app.UseSession();
