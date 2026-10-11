@@ -42,6 +42,25 @@ public class ObiletApiClient : IObiletApiClient
         return await PostAsync<List<BusLocation>>("location/getbuslocations", request, cancellationToken);
     }
 
+    public async Task<List<BusJourney>> GetBusJourneysAsync(DeviceSession session, int originId, int destinationId, DateOnly departureDate, CancellationToken cancellationToken = default)
+    {
+        // obilet's own sample request sends both dates of this call without a time part.
+        var request = new ObiletRequest<JourneyQuery>
+        {
+            Data = new JourneyQuery
+            {
+                OriginId = originId,
+                DestinationId = destinationId,
+                DepartureDate = departureDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+            },
+            DeviceSession = session,
+            Date = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            Language = _options.Language
+        };
+
+        return await PostAsync<List<BusJourney>>("journey/getbusjourneys", request, cancellationToken);
+    }
+
     // Every obilet call works the same way: post the request, then read the "data" part of the answer.
     private async Task<TData> PostAsync<TData>(string path, object request, CancellationToken cancellationToken)
     {

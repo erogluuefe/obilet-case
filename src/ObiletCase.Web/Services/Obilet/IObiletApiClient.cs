@@ -10,4 +10,7 @@ public interface IObiletApiClient
 
     /// <summary>Returns the locations matching the search text, or obilet's default list when it is null.</summary>
     Task<List<BusLocation>> GetBusLocationsAsync(DeviceSession session, string? searchText, CancellationToken cancellationToken = default);
+
+    /// <summary>Returns the bus journeys between two locations on the given day, in the order obilet sends them.</summary>
+    Task<List<BusJourney>> GetBusJourneysAsync(DeviceSession session, int originId, int destinationId, DateOnly departureDate, CancellationToken cancellationToken = default);
 }

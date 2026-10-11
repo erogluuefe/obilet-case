@@ -71,6 +71,62 @@ public class ObiletApiClientTests
         }
         """;
 
+    // Two records from a real GetJourneys response, with most of the 100+ fields left out.
+    private const string JourneysJson = """
+        {
+          "status": "Success",
+          "data": [
+            {
+              "id": 1405905513,
+              "partner-id": 32325,
+              "partner-name": "Yükseller Aksaray Birlik",
+              "bus-type": "2+1",
+              "total-seats": 41,
+              "available-seats": 38,
+              "origin-location": "İstanbul Avrupa",
+              "destination-location": "Ankara",
+              "journey": {
+                "kind": "Bus",
+                "code": "262818-1332-1274",
+                "origin": "Alibeyköy Otogarı",
+                "destination": "Ankara (Aşti) Otogarı",
+                "departure": "2026-10-12T09:15:00",
+                "arrival": "2026-10-12T16:30:00",
+                "currency": "TRY",
+                "duration": "07:15:00",
+                "original-price": 600.0000,
+                "internet-price": 545.0000
+              }
+            },
+            {
+              "id": 1405905470,
+              "partner-id": 32325,
+              "partner-name": "Yükseller Aksaray Birlik",
+              "bus-type": "2+1",
+              "total-seats": 41,
+              "available-seats": 38,
+              "origin-location": "İstanbul Avrupa",
+              "destination-location": "Ankara",
+              "journey": {
+                "kind": "Bus",
+                "code": "262818-1332-1274",
+                "origin": "Esenler Otogarı",
+                "destination": "Ankara (Aşti) Otogarı",
+                "departure": "2026-10-12T09:00:00",
+                "arrival": "2026-10-12T16:30:00",
+                "currency": "TRY",
+                "duration": "07:30:00",
+                "original-price": 600.0000,
+                "internet-price": 545.0000
+              }
+            }
+          ],
+          "message": null,
+          "user-message": null,
+          "controller": "JourneyController"
+        }
+        """;
+
     [Fact]
     public async Task GetSessionAsync_PostsKebabCaseBodyToGetSessionEndpoint()
     {
@@ -158,6 +214,54 @@ public class ObiletApiClientTests
         Assert.Equal("İstanbul Avrupa", locations[0].Name);
         Assert.Equal(350, locations[1].Id);
         Assert.Equal("İstanbul Anadolu", locations[1].Name);
+    }
+
+    [Fact]
+    public async Task GetBusJourneysAsync_PostsTheRouteAndDayWithTheVisitorSession()
+    {
+        var handler = new FakeHttpMessageHandler(JourneysJson);
+        var client = CreateClient(handler);
+
+        await client.GetBusJourneysAsync(CreateSession(), originId: 349, destinationId: 356, new DateOnly(2026, 10, 12));
+
+        Assert.Equal("https://example.test/api/journey/getbusjourneys", handler.LastRequest!.RequestUri!.ToString());
+        Assert.Contains("\"data\":{\"origin-id\":349,\"destination-id\":356,\"departure-date\":\"2026-10-12\"}", handler.LastRequestBody);
+        Assert.Contains("\"device-session\":{\"session-id\":\"session-1\",\"device-id\":\"device-1\"}", handler.LastRequestBody);
+        Assert.Contains("\"language\":\"tr-TR\"", handler.LastRequestBody);
+    }
+
+    [Fact]
+    public async Task GetBusJourneysAsync_SendsTheRequestDateWithoutATimePart()
+    {
+        var handler = new FakeHttpMessageHandler(JourneysJson);
+        var client = CreateClient(handler);
+
+        await client.GetBusJourneysAsync(CreateSession(), originId: 349, destinationId: 356, new DateOnly(2026, 10, 12));
+
+        // e.g. "date":"2026-10-11"
+        Assert.Matches("\"date\":\"\\d{4}-\\d{2}-\\d{2}\"", handler.LastRequestBody);
+    }
+
+    [Fact]
+    public async Task GetBusJourneysAsync_ReturnsTheFieldsTheJourneyPageShows()
+    {
+        var handler = new FakeHttpMessageHandler(JourneysJson);
+        var client = CreateClient(handler);
+
+        var journeys = await client.GetBusJourneysAsync(CreateSession(), originId: 349, destinationId: 356, new DateOnly(2026, 10, 12));
+
+        Assert.Equal(2, journeys.Count);
+
+        var first = journeys[0];
+        Assert.Equal("Yükseller Aksaray Birlik", first.PartnerName);
+        Assert.Equal("İstanbul Avrupa", first.OriginLocation);
+        Assert.Equal("Ankara", first.DestinationLocation);
+        Assert.Equal("Alibeyköy Otogarı", first.Journey.Origin);
+        Assert.Equal("Ankara (Aşti) Otogarı", first.Journey.Destination);
+        Assert.Equal(new DateTime(2026, 10, 12, 9, 15, 0), first.Journey.Departure);
+        Assert.Equal(new DateTime(2026, 10, 12, 16, 30, 0), first.Journey.Arrival);
+        Assert.Equal(545m, first.Journey.InternetPrice);
+        Assert.Equal("TRY", first.Journey.Currency);
     }
 
     private static ObiletApiClient CreateClient(FakeHttpMessageHandler handler)
