@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ObiletCase.Tests;
 
-// Stands in for the real obilet API: records the request and returns a canned JSON response.
+/// <summary>Stands in for the real obilet API: records the request and returns a canned JSON response.</summary>
 public class FakeHttpMessageHandler : HttpMessageHandler
 {
     private readonly string _responseJson;

@@ -1,5 +1,6 @@
 namespace ObiletCase.Web.Services.Obilet;
 
+/// <summary>Thrown when obilet answers with a status other than "Success".</summary>
 public class ObiletApiException : Exception
 {
     public ObiletApiException(string status, string? message, string? userMessage)

@@ -3,6 +3,7 @@ using ObiletCase.Web.Services.Obilet.Models;
 
 namespace ObiletCase.Web.Services.Obilet;
 
+/// <summary>Calls the obilet.com business API over HTTP.</summary>
 public class ObiletApiClient : IObiletApiClient
 {
     // obilet uses kebab-case field names, e.g. "session-id".
