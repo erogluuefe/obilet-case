@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ObiletCase.Web.Models;
 using ObiletCase.Web.Services.Obilet;
@@ -88,9 +87,10 @@ public class HomeController : Controller
         model.Tomorrow = model.Today.AddDays(1);
     }
 
+    /// <summary>Shows the error page; unexpected errors are sent here outside the development environment.</summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View();
     }
 }
