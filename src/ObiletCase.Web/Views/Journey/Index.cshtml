@@ -22,16 +22,8 @@
     <div class="alert alert-info">Bu tarihte sefer bulunamadı.</div>
 }
 
-@foreach (var busJourney in Model.Journeys)
+@foreach (var card in Model.Journeys)
 {
-    // obilet sends the currency as a code; Turkish lira is shown the way it is written in Turkey.
-    var currency = busJourney.Journey.Currency;
-
-    if (currency == "TRY")
-    {
-        currency = "TL";
-    }
-
     <div class="card mb-3">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
@@ -39,30 +31,30 @@
                     <div>
                         <div class="small text-muted">KALKIŞ</div>
 
-                        @* obilet also returns journeys that leave after midnight; they are marked so the time is not misread. *@
-                        @if (DateOnly.FromDateTime(busJourney.Journey.Departure) != Model.DepartureDate)
+                        @* Journeys that leave after midnight are marked so the time is not misread. *@
+                        @if (card.DepartsNextDay)
                         {
-                            <div class="fs-5 next-day-departure" title="Ertesi gün · @busJourney.Journey.Departure.ToString("d MMMM")">
+                            <div class="fs-5 next-day-departure" title="Ertesi gün · @card.Departure.ToString("d MMMM")">
                                 @* The moon is drawn as an inline SVG so it takes the colour of the text; an emoji cannot be recoloured. *@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" class="mb-1" aria-hidden="true"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" /></svg>
-                                @busJourney.Journey.Departure.ToString("HH:mm")
+                                @card.Departure.ToString("HH:mm")
                             </div>
                         }
                         else
                         {
-                            <div class="fs-5">@busJourney.Journey.Departure.ToString("HH:mm")</div>
+                            <div class="fs-5">@card.Departure.ToString("HH:mm")</div>
                         }
                     </div>
                     <div class="mx-3">&rarr;</div>
                     <div>
                         <div class="small text-muted">VARIŞ</div>
-                        <div class="fs-5">@busJourney.Journey.Arrival.ToString("HH:mm")</div>
+                        <div class="fs-5">@card.Arrival.ToString("HH:mm")</div>
                     </div>
                 </div>
-                <span class="badge bg-danger fs-6">@busJourney.Journey.InternetPrice.ToString("N2") @currency</span>
+                <span class="badge bg-danger fs-6">@card.Price.ToString("N2") @card.CurrencyLabel</span>
             </div>
-            <div class="small mt-2">@busJourney.PartnerName</div>
-            <div class="small text-muted">@busJourney.Journey.Origin - @busJourney.Journey.Destination</div>
+            <div class="small mt-2">@card.PartnerName</div>
+            <div class="small text-muted">@card.OriginStop - @card.DestinationStop</div>
         </div>
     </div>
 }

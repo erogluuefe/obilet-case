@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ObiletCase.Web.Models;
 using ObiletCase.Web.Services.Obilet;
+using ObiletCase.Web.Services.Obilet.Models;
 
 namespace ObiletCase.Web.Controllers;
 
@@ -35,19 +36,50 @@ public class JourneyController : Controller
             OriginName = search.OriginName,
             DestinationId = search.DestinationId,
             DestinationName = search.DestinationName,
-            DepartureDate = search.DepartureDate,
-
-            // obilet does not send the journeys in time order.
-            Journeys = journeys.OrderBy(journey => journey.Journey.Departure).ToList()
+            DepartureDate = search.DepartureDate
         };
 
         // The names in the address can be changed by hand; when there are journeys, obilet's own names are shown.
-        if (model.Journeys.Count > 0)
+        if (journeys.Count > 0)
         {
-            model.OriginName = model.Journeys[0].OriginLocation;
-            model.DestinationName = model.Journeys[0].DestinationLocation;
+            model.OriginName = journeys[0].OriginLocation;
+            model.DestinationName = journeys[0].DestinationLocation;
+        }
+
+        // obilet does not send the journeys in time order.
+        var journeysByDeparture = journeys.OrderBy(journey => journey.Journey.Departure);
+
+        foreach (var journey in journeysByDeparture)
+        {
+            model.Journeys.Add(CreateCard(journey, search.DepartureDate));
         }
 
         return View(model);
+    }
+
+    // Turns a journey from obilet into what the page shows, so the view does not have to decide anything.
+    private static JourneyCardViewModel CreateCard(BusJourney journey, DateOnly searchedDate)
+    {
+        var card = new JourneyCardViewModel
+        {
+            PartnerName = journey.PartnerName,
+            OriginStop = journey.Journey.Origin,
+            DestinationStop = journey.Journey.Destination,
+            Departure = journey.Journey.Departure,
+            Arrival = journey.Journey.Arrival,
+            Price = journey.Journey.InternetPrice,
+            CurrencyLabel = journey.Journey.Currency
+        };
+
+        // obilet also returns journeys that leave shortly after midnight; the page marks them.
+        card.DepartsNextDay = DateOnly.FromDateTime(journey.Journey.Departure) != searchedDate;
+
+        // obilet sends the currency as a code; Turkish lira is shown the way it is written in Turkey.
+        if (journey.Journey.Currency == "TRY")
+        {
+            card.CurrencyLabel = "TL";
+        }
+
+        return card;
     }
 }

@@ -36,9 +36,84 @@ public class JourneyControllerTests
 
         var model = await GetIndexModel(controller);
 
-        Assert.Equal(9, model.Journeys[0].Journey.Departure.Hour);
-        Assert.Equal(11, model.Journeys[1].Journey.Departure.Hour);
-        Assert.Equal(14, model.Journeys[2].Journey.Departure.Hour);
+        Assert.Equal(9, model.Journeys[0].Departure.Hour);
+        Assert.Equal(11, model.Journeys[1].Departure.Hour);
+        Assert.Equal(14, model.Journeys[2].Departure.Hour);
+    }
+
+    [Fact]
+    public async Task Index_PutsWhatTheCardShowsIntoTheCard()
+    {
+        var apiClient = new FakeObiletApiClient();
+        apiClient.Journeys = new List<BusJourney>
+        {
+            new BusJourney
+            {
+                PartnerName = "Metro Turizm",
+                Journey = new JourneyDetails
+                {
+                    Origin = "Esenler Otogarı",
+                    Destination = "Ankara (Aşti) Otogarı",
+                    Departure = new DateTime(2030, 5, 20, 9, 30, 0),
+                    Arrival = new DateTime(2030, 5, 20, 15, 30, 0),
+                    InternetPrice = 545m,
+                    Currency = "TRY"
+                }
+            }
+        };
+        var controller = new JourneyController(new FakeObiletSessionService(), apiClient);
+
+        var model = await GetIndexModel(controller);
+
+        var card = Assert.Single(model.Journeys);
+        Assert.Equal("Metro Turizm", card.PartnerName);
+        Assert.Equal("Esenler Otogarı", card.OriginStop);
+        Assert.Equal("Ankara (Aşti) Otogarı", card.DestinationStop);
+        Assert.Equal(new DateTime(2030, 5, 20, 9, 30, 0), card.Departure);
+        Assert.Equal(new DateTime(2030, 5, 20, 15, 30, 0), card.Arrival);
+        Assert.Equal(545m, card.Price);
+    }
+
+    [Fact]
+    public async Task Index_ShowsTurkishLiraAsTL()
+    {
+        var apiClient = new FakeObiletApiClient();
+        apiClient.Journeys = new List<BusJourney> { CreateJourney(departureHour: 9, currency: "TRY") };
+        var controller = new JourneyController(new FakeObiletSessionService(), apiClient);
+
+        var model = await GetIndexModel(controller);
+
+        Assert.Equal("TL", model.Journeys[0].CurrencyLabel);
+    }
+
+    [Fact]
+    public async Task Index_ShowsOtherCurrenciesWithTheirCode()
+    {
+        var apiClient = new FakeObiletApiClient();
+        apiClient.Journeys = new List<BusJourney> { CreateJourney(departureHour: 9, currency: "UAH") };
+        var controller = new JourneyController(new FakeObiletSessionService(), apiClient);
+
+        var model = await GetIndexModel(controller);
+
+        Assert.Equal("UAH", model.Journeys[0].CurrencyLabel);
+    }
+
+    [Fact]
+    public async Task Index_MarksJourneysThatLeaveAfterMidnight()
+    {
+        var apiClient = new FakeObiletApiClient();
+        var lateEvening = CreateJourney(departureHour: 23);
+        var afterMidnight = new BusJourney
+        {
+            Journey = new JourneyDetails { Departure = new DateTime(2030, 5, 21, 0, 5, 0) }
+        };
+        apiClient.Journeys = new List<BusJourney> { afterMidnight, lateEvening };
+        var controller = new JourneyController(new FakeObiletSessionService(), apiClient);
+
+        var model = await GetIndexModel(controller);
+
+        Assert.False(model.Journeys[0].DepartsNextDay);
+        Assert.True(model.Journeys[1].DepartsNextDay);
     }
 
     [Fact]
@@ -108,13 +183,18 @@ public class JourneyControllerTests
         };
     }
 
-    private static BusJourney CreateJourney(int departureHour)
+    // A journey on the searched day (20 May 2030), leaving at the given hour.
+    private static BusJourney CreateJourney(int departureHour, string currency = "TRY")
     {
         return new BusJourney
         {
             OriginLocation = "İstanbul Avrupa",
             DestinationLocation = "Ankara",
-            Journey = new JourneyDetails { Departure = new DateTime(2030, 5, 20, departureHour, 0, 0) }
+            Journey = new JourneyDetails
+            {
+                Departure = new DateTime(2030, 5, 20, departureHour, 0, 0),
+                Currency = currency
+            }
         };
     }
 
