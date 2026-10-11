@@ -2,7 +2,7 @@
 
 [Türkçe](README.md) | **English**
 
-Programming assignment for the obilet.com Sr. Full Stack Developer position: an ASP.NET Core MVC application that searches bus journeys through obilet's partner API.
+Case study for obilet.com: an ASP.NET Core MVC application that searches bus journeys through the obilet.com API.
 
 - **Search page:** origin and destination (searchable by typing), date, Today/Tomorrow shortcuts and a swap button.
 - **Journey page:** the journeys for the selected route and day, ordered by departure time.

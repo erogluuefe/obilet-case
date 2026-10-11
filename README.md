@@ -2,7 +2,7 @@
 
 **Türkçe** | [English](README.en.md)
 
-obilet.com Sr. Full Stack Developer programlama ödevi: obilet'in iş ortağı API'sini kullanarak otobüs seferi arayan bir ASP.NET Core MVC uygulaması.
+obilet.com için hazırladığım case çalışması: obilet.com API'sini kullanarak otobüs seferi arayan bir ASP.NET Core MVC uygulaması.
 
 - **Arama sayfası:** kalkış ve varış noktası (yazarak aranabilir), tarih, Bugün/Yarın kısayolları ve yer değiştirme butonu.
 - **Sefer sayfası:** seçilen rota ve gün için seferler, kalkış saatine göre sıralı.
