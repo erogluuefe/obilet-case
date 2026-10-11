@@ -55,10 +55,13 @@ public class HomeController : Controller
             return View(model);
         }
 
+        // The names travel with the ids, so the journey page can show them even when no journey is found.
         var journeySearch = new
         {
             model.OriginId,
+            model.OriginName,
             model.DestinationId,
+            model.DestinationName,
             DepartureDate = model.DepartureDate.ToString("O")
         };
 

@@ -103,7 +103,9 @@ public class HomeControllerTests
         Assert.Equal("Journey", redirect.ControllerName);
         Assert.Equal("Index", redirect.ActionName);
         Assert.Equal(349, redirect.RouteValues!["OriginId"]);
+        Assert.Equal("origin name", redirect.RouteValues["OriginName"]);
         Assert.Equal(356, redirect.RouteValues["DestinationId"]);
+        Assert.Equal("destination name", redirect.RouteValues["DestinationName"]);
         Assert.Equal("2030-05-20", redirect.RouteValues["DepartureDate"]);
     }
 
@@ -138,7 +140,9 @@ public class HomeControllerTests
         return new JourneySearchViewModel
         {
             OriginId = originId,
+            OriginName = "origin name",
             DestinationId = destinationId,
+            DestinationName = "destination name",
             DepartureDate = new DateOnly(2030, 5, 20)
         };
     }

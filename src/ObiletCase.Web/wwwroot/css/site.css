@@ -8,3 +8,8 @@
   max-height: 300px;
   overflow-y: auto;
 }
+
+/* Departure times after midnight belong to the next day, so they are shown in a different colour. */
+.next-day-departure {
+  color: #0a2a66;
+}
