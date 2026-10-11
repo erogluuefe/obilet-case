@@ -62,6 +62,7 @@ tests/ObiletCase.Tests  xUnit tests
 - **Journeys are sorted on the server.** obilet does not send them in departure order.
 - **Journeys after midnight are marked.** For a given day obilet also returns journeys that leave in the first hours of the next day; their departure time is shown in a different colour with a crescent icon.
 - **The currency comes from obilet.** Turkish lira is written as "TL", other currencies with their code (international journeys can come in another currency).
+- **The view does not decide.** Everything a journey card shows (the "TL" label, the next-day mark) is prepared in the controller as a `JourneyCardViewModel`; the view only prints it. That also makes these rules testable.
 - **Errors are handled in one place.** When obilet answers with an error, cannot be reached (for example 429 after too many requests) or does not answer within 20 seconds, `ObiletExceptionFilter` logs the error and shows the visitor the error page. When obilet rejects the session (400), the stored session is forgotten and the visitor's next request gets a new one.
 - **Bootstrap is the only UI library.** The jQuery that came with the template was removed; the browser side is written in plain JavaScript.
 - **Dates and prices are written in Turkish format.** The culture is defined in one place, in `Program.cs`.
