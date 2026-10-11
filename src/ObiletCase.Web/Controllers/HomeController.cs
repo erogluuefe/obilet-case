@@ -5,28 +5,40 @@ using ObiletCase.Web.Services.Obilet;
 
 namespace ObiletCase.Web.Controllers;
 
+/// <summary>Serves the journey search page.</summary>
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly IObiletSessionService _sessionService;
+    private readonly IObiletApiClient _apiClient;
 
-    public HomeController(ILogger<HomeController> logger, IObiletSessionService sessionService)
+    public HomeController(IObiletSessionService sessionService, IObiletApiClient apiClient)
     {
-        _logger = logger;
         _sessionService = sessionService;
+        _apiClient = apiClient;
     }
 
+    /// <summary>Shows the journey search form.</summary>
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        // Creates the visitor's obilet session on their first visit.
-        await _sessionService.GetSessionAsync(cancellationToken);
+        var session = await _sessionService.GetSessionAsync(cancellationToken);
+        var locations = await _apiClient.GetBusLocationsAsync(session, searchText: null, cancellationToken);
 
-        return View();
-    }
+        var model = new JourneySearchViewModel();
+        model.Locations = locations;
+        model.DepartureDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
 
-    public IActionResult Privacy()
-    {
-        return View();
+        // The default origin and destination follow the order obilet returns the locations in.
+        if (locations.Count > 0)
+        {
+            model.OriginId = locations[0].Id;
+        }
+
+        if (locations.Count > 1)
+        {
+            model.DestinationId = locations[1].Id;
+        }
+
+        return View(model);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
