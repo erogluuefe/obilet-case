@@ -11,8 +11,13 @@ public class JourneySearchViewModel : IValidatableObject
     [Range(1, int.MaxValue, ErrorMessage = "Kalkış noktası seçiniz.")]
     public int OriginId { get; set; }
 
+    // The names are only shown in the search boxes; obilet is asked with the ids.
+    public string? OriginName { get; set; }
+
     [Range(1, int.MaxValue, ErrorMessage = "Varış noktası seçiniz.")]
     public int DestinationId { get; set; }
+
+    public string? DestinationName { get; set; }
 
     public DateOnly DepartureDate { get; set; }
 

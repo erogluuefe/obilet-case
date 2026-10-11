@@ -28,7 +28,9 @@ public class HomeControllerTests
         var model = await GetIndexModel(controller);
 
         Assert.Equal(349, model.OriginId);
+        Assert.Equal("İstanbul Avrupa", model.OriginName);
         Assert.Equal(350, model.DestinationId);
+        Assert.Equal("İstanbul Anadolu", model.DestinationName);
     }
 
     [Fact]
@@ -103,6 +105,32 @@ public class HomeControllerTests
         Assert.Equal(349, redirect.RouteValues!["OriginId"]);
         Assert.Equal(356, redirect.RouteValues["DestinationId"]);
         Assert.Equal("2030-05-20", redirect.RouteValues["DepartureDate"]);
+    }
+
+    [Fact]
+    public async Task SearchLocations_AsksObiletWithTheTypedTextAndTheVisitorSession()
+    {
+        var sessionService = new FakeObiletSessionService();
+        var apiClient = CreateApiClientWithThreeLocations();
+        var controller = new HomeController(sessionService, apiClient);
+
+        await controller.SearchLocations("ank", CancellationToken.None);
+
+        Assert.Equal("ank", apiClient.LastSearchText);
+        Assert.Same(sessionService.Session, apiClient.LastLocationsSession);
+    }
+
+    [Fact]
+    public async Task SearchLocations_ReturnsTheLocationsAsJson()
+    {
+        var apiClient = CreateApiClientWithThreeLocations();
+        var controller = new HomeController(new FakeObiletSessionService(), apiClient);
+
+        var result = await controller.SearchLocations("ank", CancellationToken.None);
+
+        var jsonResult = Assert.IsType<JsonResult>(result);
+        var locations = Assert.IsType<List<BusLocation>>(jsonResult.Value);
+        Assert.Equal(3, locations.Count);
     }
 
     private static JourneySearchViewModel CreateSearch(int originId, int destinationId)

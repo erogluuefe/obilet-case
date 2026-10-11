@@ -30,11 +30,13 @@ public class HomeController : Controller
         if (model.Locations.Count > 0)
         {
             model.OriginId = model.Locations[0].Id;
+            model.OriginName = model.Locations[0].Name;
         }
 
         if (model.Locations.Count > 1)
         {
             model.DestinationId = model.Locations[1].Id;
+            model.DestinationName = model.Locations[1].Name;
         }
 
         return View(model);
@@ -61,6 +63,16 @@ public class HomeController : Controller
         };
 
         return RedirectToAction("Index", "Journey", journeySearch);
+    }
+
+    /// <summary>Returns the locations that match the typed text as JSON; called by the search boxes of the form.</summary>
+    [HttpGet]
+    public async Task<IActionResult> SearchLocations(string? text, CancellationToken cancellationToken)
+    {
+        var session = await _sessionService.GetSessionAsync(cancellationToken);
+        var locations = await _apiClient.GetBusLocationsAsync(session, text, cancellationToken);
+
+        return Json(locations);
     }
 
     // Loads what the form shows besides the visitor's own choices: the location list and the shortcut dates.

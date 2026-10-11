@@ -2,3 +2,9 @@
 .page {
   max-width: 480px;
 }
+
+/* A search can return many locations, so the list scrolls instead of growing down the page. */
+.location-menu {
+  max-height: 300px;
+  overflow-y: auto;
+}

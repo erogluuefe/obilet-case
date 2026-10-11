@@ -4,15 +4,22 @@
 }
 
 @* The form is posted back to this page; when it is valid the visitor is redirected to the journey page. *@
-<form asp-action="Index" method="post">
-    <div class="mb-3">
-        <label asp-for="OriginId" class="form-label">Nereden</label>
-        <select asp-for="OriginId" class="form-select">
+@* autocomplete is off so the browser does not open its own suggestions over the location lists. *@
+<form asp-action="Index" method="post" autocomplete="off">
+    @* Each location field is a search box with a Bootstrap dropdown. The box is not posted;
+       the two hidden inputs carry the id and the name of the selected location. *@
+    <div class="mb-3 dropdown location-field" id="originField">
+        <label for="originSearch" class="form-label">Nereden</label>
+        <input asp-for="OriginId" type="hidden" class="location-id" />
+        <input asp-for="OriginName" type="hidden" class="location-name" />
+        <input type="text" id="originSearch" class="form-control location-search" value="@Model.OriginName"
+               data-bs-toggle="dropdown" data-search-url="@Url.Action("SearchLocations")" />
+        <div class="dropdown-menu w-100 location-menu">
             @foreach (var location in Model.Locations)
             {
-                <option value="@location.Id">@location.Name</option>
+                <button type="button" class="dropdown-item" data-id="@location.Id">@location.Name</button>
             }
-        </select>
+        </div>
         <span asp-validation-for="OriginId" class="text-danger"></span>
     </div>
 
@@ -20,14 +27,18 @@
         <button type="button" id="swapLocations" class="btn btn-outline-secondary btn-sm" title="Nereden ve Nereye alanlarını değiştir" aria-label="Nereden ve Nereye alanlarını değiştir">&#8645;</button>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="DestinationId" class="form-label">Nereye</label>
-        <select asp-for="DestinationId" class="form-select">
+    <div class="mb-3 dropdown location-field" id="destinationField">
+        <label for="destinationSearch" class="form-label">Nereye</label>
+        <input asp-for="DestinationId" type="hidden" class="location-id" />
+        <input asp-for="DestinationName" type="hidden" class="location-name" />
+        <input type="text" id="destinationSearch" class="form-control location-search" value="@Model.DestinationName"
+               data-bs-toggle="dropdown" data-search-url="@Url.Action("SearchLocations")" />
+        <div class="dropdown-menu w-100 location-menu">
             @foreach (var location in Model.Locations)
             {
-                <option value="@location.Id">@location.Name</option>
+                <button type="button" class="dropdown-item" data-id="@location.Id">@location.Name</button>
             }
-        </select>
+        </div>
         <span asp-validation-for="DestinationId" class="text-danger"></span>
     </div>
 
