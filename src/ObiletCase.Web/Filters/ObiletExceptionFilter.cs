@@ -33,7 +33,6 @@ public class ObiletExceptionFilter : IExceptionFilter
         context.ExceptionHandled = true;
     }
 
-    // Decides whether the exception comes from talking to obilet.
     private static bool IsObiletFailure(Exception exception)
     {
         // obilet answered with an error status.
