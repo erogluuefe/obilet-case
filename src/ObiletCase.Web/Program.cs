@@ -6,7 +6,6 @@ using ObiletCase.Web.Services.Obilet;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 // The filter runs for every controller action, so obilet failures are handled in one place.
 builder.Services.AddControllersWithViews(options =>
 {
@@ -43,11 +42,10 @@ builder.Services.AddScoped<IObiletSessionService, ObiletSessionService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Outside development unexpected errors show the error page instead of the detailed developer page.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -65,8 +63,6 @@ app.UseRequestLocalization(new RequestLocalizationOptions()
 app.UseRouting();
 
 app.UseSession();
-
-app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
