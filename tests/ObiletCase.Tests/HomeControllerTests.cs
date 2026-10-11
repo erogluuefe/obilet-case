@@ -68,6 +68,53 @@ public class HomeControllerTests
         Assert.Same(sessionService.Session, apiClient.LastLocationsSession);
     }
 
+    [Fact]
+    public async Task IndexPost_WithInvalidSearch_ShowsTheFormAgainWithTheVisitorsChoices()
+    {
+        var apiClient = CreateApiClientWithThreeLocations();
+        var controller = new HomeController(new FakeObiletSessionService(), apiClient);
+        var search = CreateSearch(originId: 349, destinationId: 349);
+
+        // In a unit test MVC does not run the validation rules, so the error is added by hand.
+        controller.ModelState.AddModelError(nameof(JourneySearchViewModel.DestinationId), "Kalkış ve varış noktası aynı olamaz.");
+
+        var result = await controller.Index(search, CancellationToken.None);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<JourneySearchViewModel>(viewResult.Model);
+        Assert.Equal(3, model.Locations.Count);
+        Assert.Equal(349, model.OriginId);
+        Assert.Equal(349, model.DestinationId);
+        Assert.Equal(DateOnly.FromDateTime(DateTime.Today), model.Today);
+    }
+
+    [Fact]
+    public async Task IndexPost_WithValidSearch_RedirectsToTheJourneyPage()
+    {
+        var apiClient = CreateApiClientWithThreeLocations();
+        var controller = new HomeController(new FakeObiletSessionService(), apiClient);
+        var search = CreateSearch(originId: 349, destinationId: 356);
+
+        var result = await controller.Index(search, CancellationToken.None);
+
+        var redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Journey", redirect.ControllerName);
+        Assert.Equal("Index", redirect.ActionName);
+        Assert.Equal(349, redirect.RouteValues!["OriginId"]);
+        Assert.Equal(356, redirect.RouteValues["DestinationId"]);
+        Assert.Equal("2030-05-20", redirect.RouteValues["DepartureDate"]);
+    }
+
+    private static JourneySearchViewModel CreateSearch(int originId, int destinationId)
+    {
+        return new JourneySearchViewModel
+        {
+            OriginId = originId,
+            DestinationId = destinationId,
+            DepartureDate = new DateOnly(2030, 5, 20)
+        };
+    }
+
     private static FakeObiletApiClient CreateApiClientWithThreeLocations()
     {
         var apiClient = new FakeObiletApiClient();

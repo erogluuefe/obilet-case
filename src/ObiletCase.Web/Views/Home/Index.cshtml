@@ -3,8 +3,8 @@
     ViewData["Title"] = "Otobüs Bileti";
 }
 
-@* The form is sent with GET so the search ends up in the address of the journey page. *@
-<form asp-controller="Journey" asp-action="Index" method="get">
+@* The form is posted back to this page; when it is valid the visitor is redirected to the journey page. *@
+<form asp-action="Index" method="post">
     <div class="mb-3">
         <label asp-for="OriginId" class="form-label">Nereden</label>
         <select asp-for="OriginId" class="form-select">
@@ -13,6 +13,7 @@
                 <option value="@location.Id">@location.Name</option>
             }
         </select>
+        <span asp-validation-for="OriginId" class="text-danger"></span>
     </div>
 
     <div class="text-end">
@@ -27,15 +28,17 @@
                 <option value="@location.Id">@location.Name</option>
             }
         </select>
+        <span asp-validation-for="DestinationId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="DepartureDate" class="form-label">Tarih</label>
         <div class="input-group">
-            <input asp-for="DepartureDate" type="date" class="form-control" />
+            <input asp-for="DepartureDate" type="date" class="form-control" required min="@Model.Today.ToString("O")" />
             <button type="button" class="btn btn-outline-secondary date-shortcut" data-date="@Model.Today.ToString("O")">Bugün</button>
             <button type="button" class="btn btn-outline-secondary date-shortcut" data-date="@Model.Tomorrow.ToString("O")">Yarın</button>
         </div>
+        <span asp-validation-for="DepartureDate" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Bileti Bul</button>
