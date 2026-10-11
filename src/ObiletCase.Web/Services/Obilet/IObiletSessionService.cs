@@ -7,4 +7,7 @@ public interface IObiletSessionService
 {
     /// <summary>Returns the current visitor's obilet session, creating it on the first request.</summary>
     Task<DeviceSession> GetSessionAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Forgets the current visitor's stored session, so their next request gets a new one from obilet.</summary>
+    void ForgetSession();
 }

@@ -39,6 +39,20 @@ public class ObiletSessionServiceTests
     }
 
     [Fact]
+    public async Task ForgetSession_NextRequestGetsNewSessionFromObilet()
+    {
+        var apiClient = new FakeObiletApiClient();
+        var visitor = CreateVisitor(ChromeUserAgent);
+        var service = CreateService(apiClient, visitor);
+
+        await service.GetSessionAsync();
+        service.ForgetSession();
+        await service.GetSessionAsync();
+
+        Assert.Equal(2, apiClient.GetSessionCallCount);
+    }
+
+    [Fact]
     public async Task GetSessionAsync_DifferentVisitors_GetDifferentSessions()
     {
         var apiClient = new FakeObiletApiClient();

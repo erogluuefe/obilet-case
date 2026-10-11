@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -34,6 +35,32 @@ public class ObiletExceptionFilterTests
         var viewResult = Assert.IsType<ViewResult>(context.Result);
         Assert.Equal("Error", viewResult.ViewName);
         Assert.True(context.ExceptionHandled);
+    }
+
+    [Fact]
+    public void ObiletRejectsTheSession_ForgetsTheStoredSession()
+    {
+        var sessionService = new FakeObiletSessionService();
+        var filter = new ObiletExceptionFilter(NullLogger<ObiletExceptionFilter>.Instance, sessionService);
+        var context = CreateContext(new HttpRequestException("Bad Request", null, HttpStatusCode.BadRequest));
+
+        filter.OnException(context);
+
+        Assert.Equal(1, sessionService.ForgetSessionCallCount);
+        Assert.IsType<ViewResult>(context.Result);
+    }
+
+    [Fact]
+    public void TooManyRequests_KeepsTheStoredSession()
+    {
+        var sessionService = new FakeObiletSessionService();
+        var filter = new ObiletExceptionFilter(NullLogger<ObiletExceptionFilter>.Instance, sessionService);
+        var context = CreateContext(new HttpRequestException("Too Many Requests", null, HttpStatusCode.TooManyRequests));
+
+        filter.OnException(context);
+
+        Assert.Equal(0, sessionService.ForgetSessionCallCount);
+        Assert.IsType<ViewResult>(context.Result);
     }
 
     [Fact]
@@ -74,7 +101,7 @@ public class ObiletExceptionFilterTests
 
     private static ObiletExceptionFilter CreateFilter()
     {
-        return new ObiletExceptionFilter(NullLogger<ObiletExceptionFilter>.Instance);
+        return new ObiletExceptionFilter(NullLogger<ObiletExceptionFilter>.Instance, new FakeObiletSessionService());
     }
 
     private static ExceptionContext CreateContext(Exception exception)

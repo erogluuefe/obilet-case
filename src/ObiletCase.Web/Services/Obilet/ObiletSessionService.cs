@@ -48,6 +48,19 @@ public class ObiletSessionService : IObiletSessionService
         return deviceSession;
     }
 
+    public void ForgetSession()
+    {
+        var httpContext = _httpContextAccessor.HttpContext;
+
+        if (httpContext == null)
+        {
+            return;
+        }
+
+        httpContext.Session.Remove(SessionIdKey);
+        httpContext.Session.Remove(DeviceIdKey);
+    }
+
     private static GetSessionRequest CreateSessionRequest(HttpContext httpContext)
     {
         var ipAddress = "0.0.0.0";

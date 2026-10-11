@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ObiletCase.Web.Services.Obilet;
@@ -8,10 +9,12 @@ namespace ObiletCase.Web.Filters;
 public class ObiletExceptionFilter : IExceptionFilter
 {
     private readonly ILogger<ObiletExceptionFilter> _logger;
+    private readonly IObiletSessionService _sessionService;
 
-    public ObiletExceptionFilter(ILogger<ObiletExceptionFilter> logger)
+    public ObiletExceptionFilter(ILogger<ObiletExceptionFilter> logger, IObiletSessionService sessionService)
     {
         _logger = logger;
+        _sessionService = sessionService;
     }
 
     public void OnException(ExceptionContext context)
@@ -23,6 +26,16 @@ public class ObiletExceptionFilter : IExceptionFilter
         }
 
         _logger.LogError(context.Exception, "A request to the obilet API failed.");
+
+        // obilet answers with 400 when it rejects the session; keeping it would show the error page on every retry.
+        // Other failures such as 429 keep the session, so no extra session requests are sent.
+        if (context.Exception is HttpRequestException httpException)
+        {
+            if (httpException.StatusCode == HttpStatusCode.BadRequest)
+            {
+                _sessionService.ForgetSession();
+            }
+        }
 
         context.Result = new ViewResult
         {

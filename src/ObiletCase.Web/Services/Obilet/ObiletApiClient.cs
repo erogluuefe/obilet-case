@@ -75,7 +75,7 @@ public class ObiletApiClient : IObiletApiClient
             throw new ObiletApiException("Unknown", "obilet API returned an empty response.", null);
         }
 
-        // obilet reports failures in the "status" field, not with the HTTP status code.
+        // obilet can also report a failure in the "status" field of an answer that arrives with a success code.
         if (result.Status != "Success" || result.Data == null)
         {
             throw new ObiletApiException(result.Status, result.Message, result.UserMessage);

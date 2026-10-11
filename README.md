@@ -62,7 +62,7 @@ tests/ObiletCase.Tests  xUnit testleri
 - **Seferler sunucuda sıralanır.** obilet seferleri kalkış saatine göre sıralı göndermez.
 - **Gece yarısından sonraki seferler işaretlenir.** obilet, aranan günün sonucunda ertesi günün ilk saatlerinde kalkan seferleri de döndürür; bu seferlerde kalkış saati farklı renkte ve hilal işaretiyle gösterilir.
 - **Para birimi obilet'ten gelir.** Türk lirası "TL" olarak, diğer para birimleri kodlarıyla yazılır (yurt dışı seferlerde farklı para birimi gelebiliyor).
-- **Hatalar tek yerde ele alınır.** obilet hata döndüğünde, ulaşılamadığında (örneğin çok fazla istek sonrası 429) ya da 20 saniye içinde cevap vermediğinde `ObiletExceptionFilter` hatayı kaydeder ve ziyaretçiye hata sayfasını gösterir.
+- **Hatalar tek yerde ele alınır.** obilet hata döndüğünde, ulaşılamadığında (örneğin çok fazla istek sonrası 429) ya da 20 saniye içinde cevap vermediğinde `ObiletExceptionFilter` hatayı kaydeder ve ziyaretçiye hata sayfasını gösterir. obilet session'ı reddederse (400) saklanan session silinir; ziyaretçinin sonraki isteği yeni bir session alır.
 - **Arayüz kütüphanesi olarak yalnızca Bootstrap var.** Şablondan gelen jQuery kaldırıldı; tarayıcı tarafı düz JavaScript ile yazıldı.
 - **Tarih ve fiyatlar Türkçe biçimde yazılır.** Kültür `Program.cs`'te tek yerde tanımlıdır.
 - **"Bugün" Türkiye saatine göre hesaplanır.** Seferlerin neredeyse tamamı Türkiye'den kalktığı için Bugün/Yarın tarihleri ve "tarih bugünden önce olamaz" kuralı, sunucunun ya da ziyaretçinin saat diliminden bağımsız olarak Türkiye'deki günü kullanır (`TurkeyTime`).
