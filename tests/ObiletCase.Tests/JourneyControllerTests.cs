@@ -42,6 +42,18 @@ public class JourneyControllerTests
     }
 
     [Fact]
+    public async Task Index_PassesTheSearchToThePageSoItCanBeRemembered()
+    {
+        var controller = new JourneyController(new FakeObiletSessionService(), new FakeObiletApiClient());
+
+        var model = await GetIndexModel(controller);
+
+        Assert.Equal(349, model.OriginId);
+        Assert.Equal(356, model.DestinationId);
+        Assert.Equal(new DateOnly(2030, 5, 20), model.DepartureDate);
+    }
+
+    [Fact]
     public async Task Index_ShowsTheNamesObiletSentWithTheJourneys()
     {
         var apiClient = new FakeObiletApiClient();

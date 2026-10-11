@@ -136,4 +136,30 @@ dateShortcutButtons.forEach(function (button) {
 
 dateInput.addEventListener('change', highlightSelectedDateShortcut);
 
+// Starts the form with the last search the visitor made; journey-list.js saves it under the same key.
+function restoreLastSearch() {
+    // After a rejected search the form shows what the visitor just sent next to the error messages; that is left alone.
+    if (document.querySelector('.field-validation-error') !== null) {
+        return;
+    }
+
+    const savedSearch = localStorage.getItem('lastJourneySearch');
+
+    if (savedSearch === null) {
+        return;
+    }
+
+    const lastSearch = JSON.parse(savedSearch);
+
+    selectLocation(originField, lastSearch.originId, lastSearch.originName);
+    selectLocation(destinationField, lastSearch.destinationId, lastSearch.destinationName);
+
+    // A day that has passed cannot be searched any more, so the default date of the page is kept.
+    // The dates are written as year-month-day, so comparing them as text gives the right order.
+    if (lastSearch.departureDate >= dateInput.min) {
+        dateInput.value = lastSearch.departureDate;
+    }
+}
+
+restoreLastSearch();
 highlightSelectedDateShortcut();

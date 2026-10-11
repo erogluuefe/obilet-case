@@ -31,7 +31,9 @@ public class JourneyController : Controller
 
         var model = new JourneyListViewModel
         {
+            OriginId = search.OriginId,
             OriginName = search.OriginName,
+            DestinationId = search.DestinationId,
             DestinationName = search.DestinationName,
             DepartureDate = search.DepartureDate,
 

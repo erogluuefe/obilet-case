@@ -3,6 +3,12 @@
     ViewData["Title"] = Model.OriginName + " - " + Model.DestinationName;
 }
 
+@* The search of this page, written out for journey-list.js, which remembers it in the browser. *@
+<div id="journeySearch"
+     data-origin-id="@Model.OriginId" data-origin-name="@Model.OriginName"
+     data-destination-id="@Model.DestinationId" data-destination-name="@Model.DestinationName"
+     data-departure-date="@Model.DepartureDate.ToString("O")"></div>
+
 <div class="d-flex align-items-center mb-3">
     <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm me-3" title="Aramaya dön" aria-label="Aramaya dön">&larr;</a>
     <div>
@@ -59,4 +65,8 @@
             <div class="small text-muted">@busJourney.Journey.Origin - @busJourney.Journey.Destination</div>
         </div>
     </div>
+}
+
+@section Scripts {
+    <script src="~/js/journey-list.js" asp-append-version="true"></script>
 }
