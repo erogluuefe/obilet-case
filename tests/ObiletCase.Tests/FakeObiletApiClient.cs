@@ -22,4 +22,9 @@ public class FakeObiletApiClient : IObiletApiClient
 
         return Task.FromResult(deviceSession);
     }
+
+    public Task<List<BusLocation>> GetBusLocationsAsync(DeviceSession session, string? searchText, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(new List<BusLocation>());
+    }
 }
