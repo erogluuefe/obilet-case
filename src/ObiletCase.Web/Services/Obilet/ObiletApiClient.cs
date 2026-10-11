@@ -31,11 +31,12 @@ public class ObiletApiClient : IObiletApiClient
 
     public async Task<List<BusLocation>> GetBusLocationsAsync(DeviceSession session, string? searchText, CancellationToken cancellationToken = default)
     {
+        // obilet does not document the time zone of the "date" field; Turkey's time is sent because obilet runs in Turkey.
         var request = new ObiletRequest<string>
         {
             Data = searchText,
             DeviceSession = session,
-            Date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture),
+            Date = TurkeyTime.Now.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture),
             Language = _options.Language
         };
 
@@ -44,7 +45,7 @@ public class ObiletApiClient : IObiletApiClient
 
     public async Task<List<BusJourney>> GetBusJourneysAsync(DeviceSession session, int originId, int destinationId, DateOnly departureDate, CancellationToken cancellationToken = default)
     {
-        // obilet's own sample request sends both dates of this call without a time part.
+        // obilet's Postman collection sends both dates of this call without a time part.
         var request = new ObiletRequest<JourneyQuery>
         {
             Data = new JourneyQuery
@@ -54,7 +55,7 @@ public class ObiletApiClient : IObiletApiClient
                 DepartureDate = departureDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
             },
             DeviceSession = session,
-            Date = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            Date = TurkeyTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             Language = _options.Language
         };
 

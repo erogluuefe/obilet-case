@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ObiletCase.Web.Controllers;
 using ObiletCase.Web.Models;
+using ObiletCase.Web.Services;
 using ObiletCase.Web.Services.Obilet.Models;
 
 namespace ObiletCase.Tests;
@@ -41,7 +42,7 @@ public class HomeControllerTests
 
         var model = await GetIndexModel(controller);
 
-        var tomorrow = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
+        var tomorrow = TurkeyTime.Today.AddDays(1);
         Assert.Equal(tomorrow, model.DepartureDate);
     }
 
@@ -53,7 +54,7 @@ public class HomeControllerTests
 
         var model = await GetIndexModel(controller);
 
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = TurkeyTime.Today;
         Assert.Equal(today, model.Today);
         Assert.Equal(today.AddDays(1), model.Tomorrow);
     }
@@ -87,7 +88,7 @@ public class HomeControllerTests
         Assert.Equal(3, model.Locations.Count);
         Assert.Equal(349, model.OriginId);
         Assert.Equal(349, model.DestinationId);
-        Assert.Equal(DateOnly.FromDateTime(DateTime.Today), model.Today);
+        Assert.Equal(TurkeyTime.Today, model.Today);
     }
 
     [Fact]

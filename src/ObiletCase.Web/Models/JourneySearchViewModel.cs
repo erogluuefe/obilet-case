@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ObiletCase.Web.Services;
 using ObiletCase.Web.Services.Obilet.Models;
 
 namespace ObiletCase.Web.Models;
@@ -37,7 +38,7 @@ public class JourneySearchViewModel : IValidatableObject
                 new[] { nameof(DestinationId) }));
         }
 
-        if (DepartureDate < DateOnly.FromDateTime(DateTime.Today))
+        if (DepartureDate < TurkeyTime.Today)
         {
             errors.Add(new ValidationResult(
                 "Yolculuk tarihi bugünden önce olamaz.",

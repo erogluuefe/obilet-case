@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ObiletCase.Web.Models;
+using ObiletCase.Web.Services;
 using ObiletCase.Web.Services.Obilet;
 
 namespace ObiletCase.Web.Controllers;
@@ -83,7 +84,9 @@ public class HomeController : Controller
         var session = await _sessionService.GetSessionAsync(cancellationToken);
 
         model.Locations = await _apiClient.GetBusLocationsAsync(session, searchText: null, cancellationToken);
-        model.Today = DateOnly.FromDateTime(DateTime.Today);
+
+        // Almost all journeys leave from Turkey, so "today" is the day in Turkey, wherever the server runs.
+        model.Today = TurkeyTime.Today;
         model.Tomorrow = model.Today.AddDays(1);
     }
 

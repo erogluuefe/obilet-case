@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using ObiletCase.Web.Models;
+using ObiletCase.Web.Services;
 
 namespace ObiletCase.Tests;
 
 public class JourneySearchViewModelTests
 {
-    private static readonly DateOnly Today = DateOnly.FromDateTime(DateTime.Today);
+    private static readonly DateOnly Today = TurkeyTime.Today;
 
     [Fact]
     public void DifferentLocationsAndTomorrow_IsValid()
