@@ -9,4 +9,8 @@ public class JourneySearchViewModel
     public int OriginId { get; set; }
     public int DestinationId { get; set; }
     public DateOnly DepartureDate { get; set; }
+
+    // The dates behind the "Bugün" and "Yarın" buttons.
+    public DateOnly Today { get; set; }
+    public DateOnly Tomorrow { get; set; }
 }

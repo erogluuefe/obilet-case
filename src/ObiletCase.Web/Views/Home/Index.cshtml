@@ -15,6 +15,10 @@
         </select>
     </div>
 
+    <div class="text-end">
+        <button type="button" id="swapLocations" class="btn btn-outline-secondary btn-sm" title="Nereden ve Nereye alanlarını değiştir" aria-label="Nereden ve Nereye alanlarını değiştir">&#8645;</button>
+    </div>
+
     <div class="mb-3">
         <label asp-for="DestinationId" class="form-label">Nereye</label>
         <select asp-for="DestinationId" class="form-select">
@@ -27,8 +31,16 @@
 
     <div class="mb-3">
         <label asp-for="DepartureDate" class="form-label">Tarih</label>
-        <input asp-for="DepartureDate" type="date" class="form-control" />
+        <div class="input-group">
+            <input asp-for="DepartureDate" type="date" class="form-control" />
+            <button type="button" class="btn btn-outline-secondary date-shortcut" data-date="@Model.Today.ToString("O")">Bugün</button>
+            <button type="button" class="btn btn-outline-secondary date-shortcut" data-date="@Model.Tomorrow.ToString("O")">Yarın</button>
+        </div>
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Bileti Bul</button>
 </form>
+
+@section Scripts {
+    <script src="~/js/journey-search.js" asp-append-version="true"></script>
+}

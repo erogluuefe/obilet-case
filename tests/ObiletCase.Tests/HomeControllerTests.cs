@@ -44,6 +44,19 @@ public class HomeControllerTests
     }
 
     [Fact]
+    public async Task Index_ProvidesTodayAndTomorrowForTheDateButtons()
+    {
+        var apiClient = CreateApiClientWithThreeLocations();
+        var controller = new HomeController(new FakeObiletSessionService(), apiClient);
+
+        var model = await GetIndexModel(controller);
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        Assert.Equal(today, model.Today);
+        Assert.Equal(today.AddDays(1), model.Tomorrow);
+    }
+
+    [Fact]
     public async Task Index_AsksObiletWithTheVisitorSession()
     {
         var sessionService = new FakeObiletSessionService();

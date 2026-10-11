@@ -25,7 +25,9 @@ public class HomeController : Controller
 
         var model = new JourneySearchViewModel();
         model.Locations = locations;
-        model.DepartureDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
+        model.Today = DateOnly.FromDateTime(DateTime.Today);
+        model.Tomorrow = model.Today.AddDays(1);
+        model.DepartureDate = model.Tomorrow;
 
         // The default origin and destination follow the order obilet returns the locations in.
         if (locations.Count > 0)
