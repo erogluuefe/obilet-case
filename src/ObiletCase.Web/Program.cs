@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using ObiletCase.Web.Configuration;
 using ObiletCase.Web.Data;
@@ -13,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<ObiletExceptionFilter>();
-});
+})
+.AddViewLocalization()
+.AddDataAnnotationsLocalization();
 
 builder.Services.AddOptions<ObiletApiOptions>()
     .Bind(builder.Configuration.GetSection(ObiletApiOptions.SectionName))
@@ -55,6 +58,9 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<ITranslationStore, TranslationStore>();
 
+// Replaces the default resx-based factory; it must stay after AddControllersWithViews, because the last registration wins.
+builder.Services.AddSingleton<IStringLocalizerFactory, DbStringLocalizerFactory>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IObiletSessionService, ObiletSessionService>();
 
@@ -76,8 +82,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// Every request runs in Turkish culture, so dates and prices are written the Turkish way in every view.
-var supportedCultures = new[] { "tr-TR" };
+// Turkish is the default; a visitor can get English (the culture comes from the query string, a cookie, or the browser language).
+var supportedCultures = new[] { "tr-TR", "en-US" };
 
 app.UseRequestLocalization(new RequestLocalizationOptions()
     .SetDefaultCulture("tr-TR")
