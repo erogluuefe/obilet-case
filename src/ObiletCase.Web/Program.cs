@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using ObiletCase.Web.Configuration;
 using ObiletCase.Web.Data;
 using ObiletCase.Web.Filters;
+using ObiletCase.Web.Localization;
 using ObiletCase.Web.Services.Obilet;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,11 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddOptions<ObiletApiOptions>()
     .Bind(builder.Configuration.GetSection(ObiletApiOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddOptions<LocalizationOptions>()
+    .Bind(builder.Configuration.GetSection(LocalizationOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
@@ -44,6 +50,10 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("Default"));
 });
+
+// To read translations from another source or cache (e.g. Redis), register a different ITranslationStore here.
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ITranslationStore, TranslationStore>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IObiletSessionService, ObiletSessionService>();
