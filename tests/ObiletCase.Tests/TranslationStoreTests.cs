@@ -32,7 +32,7 @@ public class TranslationStoreTests : IDisposable
         }
 
         _cache = new MemoryCache(new MemoryCacheOptions());
-        _store = new TranslationStore(new FakeDbContextFactory(_options), _cache, Options.Create(new LocalizationOptions()));
+        _store = new TranslationStore(new FakeDbContextFactory(_options), _cache, Options.Create(new TranslationOptions()));
     }
 
     public void Dispose()

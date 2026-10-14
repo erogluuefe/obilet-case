@@ -12,10 +12,10 @@ public class TranslationStore : ITranslationStore
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly IMemoryCache _cache;
 
-    // How long a language stays cached is set in appsettings ("Localization" section).
+    // How long a language stays cached is set in appsettings ("Translations" section).
     private readonly TimeSpan _cacheDuration;
 
-    public TranslationStore(IDbContextFactory<AppDbContext> dbContextFactory, IMemoryCache cache, IOptions<LocalizationOptions> options)
+    public TranslationStore(IDbContextFactory<AppDbContext> dbContextFactory, IMemoryCache cache, IOptions<TranslationOptions> options)
     {
         _dbContextFactory = dbContextFactory;
         _cache = cache;

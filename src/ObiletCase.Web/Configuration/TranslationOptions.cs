@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ObiletCase.Web.Configuration;
 
-/// <summary>Localization settings ("Localization" section).</summary>
-public class LocalizationOptions
+/// <summary>Translation settings ("Translations" section).</summary>
+public class TranslationOptions
 {
-    public const string SectionName = "Localization";
+    public const string SectionName = "Translations";
 
     /// <summary>How long a language's translations stay in memory before they are read from the database again.</summary>
     [Range(1, 1440)]

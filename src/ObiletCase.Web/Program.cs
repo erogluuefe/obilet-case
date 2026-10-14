@@ -20,8 +20,8 @@ builder.Services.AddOptions<ObiletApiOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.AddOptions<LocalizationOptions>()
-    .Bind(builder.Configuration.GetSection(LocalizationOptions.SectionName))
+builder.Services.AddOptions<TranslationOptions>()
+    .Bind(builder.Configuration.GetSection(TranslationOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
