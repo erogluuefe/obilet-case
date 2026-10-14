@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ObiletCase.Web.Configuration;
+using ObiletCase.Web.Data;
 using ObiletCase.Web.Filters;
 using ObiletCase.Web.Services.Obilet;
 
@@ -37,10 +39,22 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// The only line that names the database; switching to PostgreSQL means changing UseSqlite here.
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("Default"));
+});
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IObiletSessionService, ObiletSessionService>();
 
 var app = builder.Build();
+
+// Creates the database on first run and applies any migrations added since.
+using (var database = app.Services.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext())
+{
+    database.Database.Migrate();
+}
 
 // Outside development unexpected errors show the error page instead of the detailed developer page.
 if (!app.Environment.IsDevelopment())

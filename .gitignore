@@ -483,3 +483,8 @@ $RECYCLE.BIN/
 
 # Local assignment materials
 docs/
+
+# Local SQLite database, created on first run
+*.db
+*.db-shm
+*.db-wal
